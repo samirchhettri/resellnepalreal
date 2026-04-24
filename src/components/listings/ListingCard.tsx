@@ -1,13 +1,32 @@
 import { Link } from "react-router-dom";
-import { MapPin } from "lucide-react";
+import { Bookmark, MapPin } from "lucide-react";
 import { formatPrice, type Listing } from "@/lib/types/listing";
 import { CATEGORIES } from "@/lib/constants/listings";
+import { cn } from "@/lib/utils";
 
 const categoryLabel = (slug: string) =>
   CATEGORIES.find((c) => c.slug === slug)?.label ?? slug;
 
-export const ListingCard = ({ listing }: { listing: Listing }) => {
+interface ListingCardProps {
+  listing: Listing;
+  isSaved?: boolean;
+  onToggleSave?: (id: string) => void;
+  showSaveButton?: boolean;
+}
+
+export const ListingCard = ({
+  listing,
+  isSaved = false,
+  onToggleSave,
+  showSaveButton = true,
+}: ListingCardProps) => {
   const cover = listing.images?.[0];
+
+  const handleSaveClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onToggleSave?.(listing.id);
+  };
 
   return (
     <Link
@@ -31,6 +50,25 @@ export const ListingCard = ({ listing }: { listing: Listing }) => {
         <span className="absolute left-2 top-2 rounded-md bg-background/90 px-2 py-0.5 text-[10px] font-semibold uppercase text-foreground">
           {categoryLabel(listing.category)}
         </span>
+        {showSaveButton && onToggleSave && (
+          <button
+            type="button"
+            onClick={handleSaveClick}
+            aria-label={isSaved ? "Remove from saved" : "Save item"}
+            aria-pressed={isSaved}
+            className={cn(
+              "absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-all duration-200 hover:scale-110 active:scale-95",
+              isSaved && "text-primary",
+            )}
+          >
+            <Bookmark
+              className={cn(
+                "h-4 w-4 transition-all",
+                isSaved && "fill-primary text-primary",
+              )}
+            />
+          </button>
+        )}
       </div>
       <div className="space-y-1 p-3">
         <p className="font-semibold text-foreground">{formatPrice(listing.price)}</p>
