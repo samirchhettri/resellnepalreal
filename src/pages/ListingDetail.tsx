@@ -319,10 +319,14 @@ const ListingDetail = () => {
           <Button
             type="button"
             onClick={handleChat}
-            disabled={isSold || isOwner}
+            disabled={isSold || isOwner || chatLoading}
             className="h-11 flex-1 gap-2"
           >
-            <MessageCircle className="h-4 w-4" />
+            {chatLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <MessageCircle className="h-4 w-4" />
+            )}
             {isOwner
               ? "Your listing"
               : isSold
