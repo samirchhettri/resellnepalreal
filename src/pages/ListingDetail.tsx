@@ -52,6 +52,7 @@ const ListingDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { isSaved, toggleSaved } = useSavedListings();
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [seller, setSeller] = useState<SellerSummary | null>(null);
@@ -312,11 +313,11 @@ const ListingDetail = () => {
             variant="outline"
             size="icon"
             onClick={handleSave}
-            aria-label={saved ? "Remove from saved" : "Save item"}
+            aria-label={listing && isSaved(listing.id) ? "Remove from saved" : "Save item"}
             className="h-11 w-11 shrink-0"
           >
             <Bookmark
-              className={cn("h-5 w-5", saved && "fill-primary text-primary")}
+              className={cn("h-5 w-5 transition-all", listing && isSaved(listing.id) && "fill-primary text-primary")}
             />
           </Button>
           <Button
