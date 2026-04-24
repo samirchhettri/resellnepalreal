@@ -16,6 +16,7 @@ import Saved from "./pages/Saved.tsx";
 import Profile from "./pages/Profile.tsx";
 import EditProfile from "./pages/EditProfile.tsx";
 import CreateListing from "./pages/CreateListing.tsx";
+import ListingDetail from "./pages/ListingDetail.tsx";
 import Login from "./pages/auth/Login.tsx";
 import Signup from "./pages/auth/Signup.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/search" element={<Search />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/category/:slug" element={<CategoryPage />} />
+              <Route path="/listing/:id" element={<ListingDetail />} />
             </Route>
 
             {/* Protected app shell */}
