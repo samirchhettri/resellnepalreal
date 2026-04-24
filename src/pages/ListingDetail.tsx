@@ -30,6 +30,7 @@ import { VerifiedBadge } from "@/components/profile/VerifiedBadge";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants/listings";
 import { formatPrice, type Listing } from "@/lib/types/listing";
 import { startConversation } from "@/lib/chat/startConversation";
+import { useSavedListings } from "@/hooks/useSavedListings";
 import { cn } from "@/lib/utils";
 
 interface SellerSummary {
@@ -51,12 +52,12 @@ const ListingDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { isSaved, toggleSaved } = useSavedListings();
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [seller, setSeller] = useState<SellerSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
@@ -132,10 +133,13 @@ const ListingDetail = () => {
     navigate(`/chat/${convoId}`);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!requireAuth("save items")) return;
-    setSaved((s) => !s);
-    toast({ title: saved ? "Removed from saved" : "Saved to your wishlist" });
+    if (!listing) return;
+    const res = await toggleSaved(listing.id);
+    if (!res.error) {
+      toast({ title: res.saved ? "Saved to your wishlist" : "Removed from saved" });
+    }
   };
 
   const handleShare = async () => {
@@ -309,11 +313,11 @@ const ListingDetail = () => {
             variant="outline"
             size="icon"
             onClick={handleSave}
-            aria-label={saved ? "Remove from saved" : "Save item"}
+            aria-label={listing && isSaved(listing.id) ? "Remove from saved" : "Save item"}
             className="h-11 w-11 shrink-0"
           >
             <Bookmark
-              className={cn("h-5 w-5", saved && "fill-primary text-primary")}
+              className={cn("h-5 w-5 transition-all", listing && isSaved(listing.id) && "fill-primary text-primary")}
             />
           </Button>
           <Button
