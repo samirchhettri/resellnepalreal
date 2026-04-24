@@ -8,6 +8,9 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Index from "./pages/Index.tsx";
 import Browse from "./pages/Browse.tsx";
+import Search from "./pages/Search.tsx";
+import Categories from "./pages/Categories.tsx";
+import CategoryPage from "./pages/CategoryPage.tsx";
 import Messages from "./pages/Messages.tsx";
 import Saved from "./pages/Saved.tsx";
 import Profile from "./pages/Profile.tsx";
@@ -35,6 +38,9 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/browse" element={<Browse />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/category/:slug" element={<CategoryPage />} />
             </Route>
 
             {/* Protected app shell */}
