@@ -11,6 +11,7 @@ import Browse from "./pages/Browse.tsx";
 import Messages from "./pages/Messages.tsx";
 import Saved from "./pages/Saved.tsx";
 import Profile from "./pages/Profile.tsx";
+import EditProfile from "./pages/EditProfile.tsx";
 import Login from "./pages/auth/Login.tsx";
 import Signup from "./pages/auth/Signup.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/saved" element={<Saved />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/edit-profile" element={<EditProfile />} />
               </Route>
             </Route>
 
