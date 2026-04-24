@@ -1,8 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { Header } from "./Header";
 import { BottomNav } from "./BottomNav";
+import { usePresenceHeartbeat } from "@/hooks/usePresence";
 
 export const AppLayout = () => {
+  usePresenceHeartbeat();
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <Header />
