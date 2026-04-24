@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants/listings";
 
-const categoryValues = CATEGORIES.map((c) => c.slug);
-const conditionValues = CONDITIONS.map((c) => c.value);
+const categoryValues: string[] = CATEGORIES.map((c) => c.slug);
+const conditionValues: string[] = CONDITIONS.map((c) => c.value);
 
 export const listingSchema = z.object({
   title: z
