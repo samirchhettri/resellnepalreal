@@ -53,6 +53,7 @@ const App = () => (
                 <Route path="/messages" element={<Chat />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/chat/:id" element={<ChatRoom />} />
+                <Route path="/notifications" element={<Notifications />} />
                 <Route path="/saved" element={<Saved />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
