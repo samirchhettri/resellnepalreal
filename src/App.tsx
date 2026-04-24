@@ -11,7 +11,8 @@ import Browse from "./pages/Browse.tsx";
 import Search from "./pages/Search.tsx";
 import Categories from "./pages/Categories.tsx";
 import CategoryPage from "./pages/CategoryPage.tsx";
-import Messages from "./pages/Messages.tsx";
+import Chat from "./pages/Chat.tsx";
+import ChatRoom from "./pages/ChatRoom.tsx";
 import Saved from "./pages/Saved.tsx";
 import Profile from "./pages/Profile.tsx";
 import EditProfile from "./pages/EditProfile.tsx";
@@ -48,7 +49,9 @@ const App = () => (
             {/* Protected app shell */}
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
-                <Route path="/messages" element={<Messages />} />
+                <Route path="/messages" element={<Chat />} />
+                <Route path="/chat" element={<Chat />} />
+                <Route path="/chat/:id" element={<ChatRoom />} />
                 <Route path="/saved" element={<Saved />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
