@@ -13,6 +13,7 @@ import Categories from "./pages/Categories.tsx";
 import CategoryPage from "./pages/CategoryPage.tsx";
 import Chat from "./pages/Chat.tsx";
 import ChatRoom from "./pages/ChatRoom.tsx";
+import Notifications from "./pages/Notifications.tsx";
 import Saved from "./pages/Saved.tsx";
 import Profile from "./pages/Profile.tsx";
 import EditProfile from "./pages/EditProfile.tsx";
@@ -52,6 +53,7 @@ const App = () => (
                 <Route path="/messages" element={<Chat />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/chat/:id" element={<ChatRoom />} />
+                <Route path="/notifications" element={<Notifications />} />
                 <Route path="/saved" element={<Saved />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
