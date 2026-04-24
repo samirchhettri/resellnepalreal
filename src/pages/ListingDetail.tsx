@@ -30,6 +30,7 @@ import { VerifiedBadge } from "@/components/profile/VerifiedBadge";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants/listings";
 import { formatPrice, type Listing } from "@/lib/types/listing";
 import { startConversation } from "@/lib/chat/startConversation";
+import { useSavedListings } from "@/hooks/useSavedListings";
 import { cn } from "@/lib/utils";
 
 interface SellerSummary {
@@ -56,7 +57,6 @@ const ListingDetail = () => {
   const [seller, setSeller] = useState<SellerSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
@@ -132,10 +132,13 @@ const ListingDetail = () => {
     navigate(`/chat/${convoId}`);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!requireAuth("save items")) return;
-    setSaved((s) => !s);
-    toast({ title: saved ? "Removed from saved" : "Saved to your wishlist" });
+    if (!listing) return;
+    const res = await toggleSaved(listing.id);
+    if (!res.error) {
+      toast({ title: res.saved ? "Saved to your wishlist" : "Removed from saved" });
+    }
   };
 
   const handleShare = async () => {
