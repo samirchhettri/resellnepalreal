@@ -29,6 +29,7 @@ import { ImageGallery } from "@/components/listings/ImageGallery";
 import { VerifiedBadge } from "@/components/profile/VerifiedBadge";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants/listings";
 import { formatPrice, type Listing } from "@/lib/types/listing";
+import { startConversation } from "@/lib/chat/startConversation";
 import { cn } from "@/lib/utils";
 
 interface SellerSummary {
@@ -104,16 +105,31 @@ const ListingDetail = () => {
     return false;
   };
 
-  const handleChat = () => {
+  const [chatLoading, setChatLoading] = useState(false);
+
+  const handleChat = async () => {
     if (!requireAuth("message the seller")) return;
-    if (listing && user && listing.user_id === user.id) {
+    if (!listing || !user) return;
+    if (listing.user_id === user.id) {
       toast({ title: "This is your listing" });
       return;
     }
-    toast({
-      title: "Chat coming soon",
-      description: "Real-time messaging will be available shortly.",
-    });
+    setChatLoading(true);
+    const { id: convoId, error } = await startConversation(
+      user.id,
+      listing.user_id,
+      listing.id,
+    );
+    setChatLoading(false);
+    if (error || !convoId) {
+      toast({
+        title: "Could not start chat",
+        description: error ?? "Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    navigate(`/chat/${convoId}`);
   };
 
   const handleSave = () => {
