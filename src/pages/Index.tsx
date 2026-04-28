@@ -15,7 +15,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
 };
 
 const Index = () => {
-  const { listings, loading, loadingMore, hasMore, loadMore } = useListings();
+  const { listings, loading, loadingMore, hasMore, error, loadMore, refresh } = useListings();
 
   return (
     <div className="space-y-6">
@@ -64,6 +64,8 @@ const Index = () => {
         <ListingGrid
           listings={listings}
           loading={loading}
+          error={error}
+          onRetry={refresh}
           empty="No listings yet. Be the first to post one!"
         />
         <InfiniteScrollSentinel onIntersect={loadMore} disabled={!hasMore || loading} />
