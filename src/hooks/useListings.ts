@@ -59,6 +59,7 @@ export const useListings = (filters: ListingFilters = {}) => {
         setError(error.message);
         return;
       }
+      setError(null);
       const rows = (data ?? []) as Listing[];
       setListings((prev) => (replace ? rows : [...prev, ...rows]));
       setHasMore(rows.length === PAGE_SIZE);
@@ -90,5 +91,14 @@ export const useListings = (filters: ListingFilters = {}) => {
     setLoadingMore(false);
   }, [hasMore, loading, loadingMore, loadPage]);
 
-  return { listings, loading, loadingMore, hasMore, error, loadMore };
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    pageRef.current = 0;
+    setHasMore(true);
+    await loadPage(0, true);
+    setLoading(false);
+  }, [loadPage]);
+
+  return { listings, loading, loadingMore, hasMore, error, loadMore, refresh };
 };
