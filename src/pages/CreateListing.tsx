@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +37,7 @@ const CreateListing = () => {
     handleSubmit,
     control,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<ListingInput>({
     resolver: zodResolver(listingSchema),
@@ -50,6 +51,50 @@ const CreateListing = () => {
       location: "",
     },
   });
+
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const handleAiSuggest = async () => {
+    const v = getValues();
+    if (!v.title?.trim() && !v.description?.trim()) {
+      toast({
+        title: "Add a title or description first",
+        description: "AI needs something to work with.",
+      });
+      return;
+    }
+    setAiLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-assistant", {
+        body: {
+          mode: "suggest",
+          title: v.title,
+          description: v.description,
+          category: v.category,
+        },
+      });
+      if (error) throw error;
+      const s = (data as any)?.suggestion;
+      if (!s) throw new Error("No suggestion returned");
+
+      if (s.title) setValue("title", String(s.title).slice(0, 80), { shouldValidate: true });
+      if (s.description) setValue("description", String(s.description).slice(0, 2000), { shouldValidate: true });
+      if (typeof s.price_npr === "number" && s.price_npr > 0)
+        setValue("price", Math.round(s.price_npr), { shouldValidate: true });
+      if (s.category) setValue("category", String(s.category), { shouldValidate: true });
+      if (s.condition) setValue("condition", String(s.condition), { shouldValidate: true });
+
+      toast({
+        title: "AI suggestions applied ✨",
+        description: s.notes ? String(s.notes) : "Review and tweak before publishing.",
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Try again";
+      toast({ title: "AI suggest failed", description: message, variant: "destructive" });
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   // Prefill location from profile when it loads
   useEffect(() => {
