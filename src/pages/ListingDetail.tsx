@@ -9,6 +9,7 @@ import {
   MapPin,
   MessageCircle,
   Share2,
+  Ban,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,8 @@ import { CATEGORIES, CONDITIONS } from "@/lib/constants/listings";
 import { formatPrice, type Listing } from "@/lib/types/listing";
 import { startConversation } from "@/lib/chat/startConversation";
 import { useSavedListings } from "@/hooks/useSavedListings";
+import { useBlockedUsers } from "@/hooks/useBlockedUsers";
+import { ReportDialog } from "@/components/safety/ReportDialog";
 import { cn } from "@/lib/utils";
 
 interface SellerSummary {
@@ -53,12 +56,14 @@ const ListingDetail = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const { isSaved, toggleSaved } = useSavedListings();
+  const { isBlocked, block, unblock } = useBlockedUsers();
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [seller, setSeller] = useState<SellerSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [blockConfirmOpen, setBlockConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -156,12 +161,22 @@ const ListingDetail = () => {
     }
   };
 
-  const submitReport = () => {
-    setReportOpen(false);
-    toast({
-      title: "Report submitted",
-      description: "Thanks — our team will review this listing.",
-    });
+  const handleToggleBlock = async () => {
+    if (!requireAuth("block users")) return;
+    if (!listing) return;
+    const blocked = isBlocked(listing.user_id);
+    const res = blocked ? await unblock(listing.user_id) : await block(listing.user_id);
+    if (res.error) {
+      toast({ title: "Action failed", description: res.error, variant: "destructive" });
+    } else {
+      toast({
+        title: blocked ? "User unblocked" : "User blocked",
+        description: blocked
+          ? "You'll see their listings and messages again."
+          : "You won't be contacted by this user.",
+      });
+    }
+    setBlockConfirmOpen(false);
   };
 
   if (loading) {
@@ -297,14 +312,36 @@ const ListingDetail = () => {
         </Link>
       </section>
 
-      <button
-        type="button"
-        onClick={() => setReportOpen(true)}
-        className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"
-      >
-        <Flag className="h-3.5 w-3.5" />
-        Report this listing
-      </button>
+      <div className="flex flex-wrap items-center gap-4">
+        <button
+          type="button"
+          onClick={() => {
+            if (!requireAuth("report a listing")) return;
+            setReportOpen(true);
+          }}
+          className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+        >
+          <Flag className="h-3.5 w-3.5" />
+          Report this listing
+        </button>
+        {!isOwner && (
+          <button
+            type="button"
+            onClick={() => {
+              if (!requireAuth("block users")) return;
+              if (isBlocked(listing.user_id)) {
+                handleToggleBlock();
+              } else {
+                setBlockConfirmOpen(true);
+              }
+            }}
+            className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+          >
+            <Ban className="h-3.5 w-3.5" />
+            {isBlocked(listing.user_id) ? "Unblock seller" : "Block seller"}
+          </button>
+        )}
+      </div>
 
       <div className="fixed inset-x-0 bottom-16 z-30 border-t border-border bg-background/95 backdrop-blur-md safe-bottom">
         <div className="mx-auto flex max-w-screen-md items-center gap-2 px-4 py-3">
@@ -340,20 +377,26 @@ const ListingDetail = () => {
         </div>
       </div>
 
-      <AlertDialog open={reportOpen} onOpenChange={setReportOpen}>
+      <ReportDialog
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        targetType="listing"
+        listingId={listing.id}
+        reportedUserId={listing.user_id}
+      />
+
+      <AlertDialog open={blockConfirmOpen} onOpenChange={setBlockConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Report this listing?</AlertDialogTitle>
+            <AlertDialogTitle>Block this seller?</AlertDialogTitle>
             <AlertDialogDescription>
-              Let us know if this listing looks like spam, a scam, or violates our
-              community guidelines. Our team will review it.
+              They won't be able to contact you and you won't see their messages.
+              You can unblock them anytime.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={submitReport}>
-              Submit report
-            </AlertDialogAction>
+            <AlertDialogAction onClick={handleToggleBlock}>Block</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
