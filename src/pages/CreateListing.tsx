@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, CONDITIONS } from "@/lib/constants/listings";
 import { listingSchema, type ListingInput } from "@/lib/validators/listing";
 import { ImagePicker, type ImageDraft } from "@/components/listings/ImagePicker";
+import { moderateText } from "@/lib/moderation/keywords";
 
 const CreateListing = () => {
   const navigate = useNavigate();
@@ -70,6 +71,16 @@ const CreateListing = () => {
       toast({
         title: "Add at least one photo",
         description: "Listings with photos sell faster.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const moderation = moderateText(values.title, values.description);
+    if (moderation.flagged) {
+      toast({
+        title: "Listing blocked by content rules",
+        description: `Please remove or rephrase: "${moderation.matched.join(", ")}"`,
         variant: "destructive",
       });
       return;
