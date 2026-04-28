@@ -1,31 +1,46 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { ErrorBoundary } from "@/components/system/ErrorBoundary";
+import { RouteFallback } from "@/components/system/RouteFallback";
+
+// Eager: home + auth (first paint)
 import Index from "./pages/Index.tsx";
-import Browse from "./pages/Browse.tsx";
-import Search from "./pages/Search.tsx";
-import Categories from "./pages/Categories.tsx";
-import CategoryPage from "./pages/CategoryPage.tsx";
-import Chat from "./pages/Chat.tsx";
-import ChatRoom from "./pages/ChatRoom.tsx";
-import Notifications from "./pages/Notifications.tsx";
-import Saved from "./pages/Saved.tsx";
-import Profile from "./pages/Profile.tsx";
-import EditProfile from "./pages/EditProfile.tsx";
-import CreateListing from "./pages/CreateListing.tsx";
-import ListingDetail from "./pages/ListingDetail.tsx";
-import Safety from "./pages/Safety.tsx";
-import Help from "./pages/Help.tsx";
 import Login from "./pages/auth/Login.tsx";
 import Signup from "./pages/auth/Signup.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
-const queryClient = new QueryClient();
+// Lazy: everything else
+const Browse = lazy(() => import("./pages/Browse.tsx"));
+const Search = lazy(() => import("./pages/Search.tsx"));
+const Categories = lazy(() => import("./pages/Categories.tsx"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage.tsx"));
+const Chat = lazy(() => import("./pages/Chat.tsx"));
+const ChatRoom = lazy(() => import("./pages/ChatRoom.tsx"));
+const Notifications = lazy(() => import("./pages/Notifications.tsx"));
+const Saved = lazy(() => import("./pages/Saved.tsx"));
+const Profile = lazy(() => import("./pages/Profile.tsx"));
+const EditProfile = lazy(() => import("./pages/EditProfile.tsx"));
+const CreateListing = lazy(() => import("./pages/CreateListing.tsx"));
+const ListingDetail = lazy(() => import("./pages/ListingDetail.tsx"));
+const Safety = lazy(() => import("./pages/Safety.tsx"));
+const Help = lazy(() => import("./pages/Help.tsx"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -34,40 +49,43 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+          <ErrorBoundary>
+            <Suspense fallback={<RouteFallback />}>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
 
-            {/* Public app shell — Home and Browse stay public, the rest are protected */}
-            <Route element={<AppLayout />}>
-              <Route path="/" element={<Index />} />
-              <Route path="/browse" element={<Browse />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/category/:slug" element={<CategoryPage />} />
-              <Route path="/listing/:id" element={<ListingDetail />} />
-              <Route path="/safety" element={<Safety />} />
-              <Route path="/help" element={<Help />} />
-            </Route>
+                {/* Public app shell */}
+                <Route element={<AppLayout />}>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/browse" element={<Browse />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/categories" element={<Categories />} />
+                  <Route path="/category/:slug" element={<CategoryPage />} />
+                  <Route path="/listing/:id" element={<ListingDetail />} />
+                  <Route path="/safety" element={<Safety />} />
+                  <Route path="/help" element={<Help />} />
+                </Route>
 
-            {/* Protected app shell */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AppLayout />}>
-                <Route path="/messages" element={<Chat />} />
-                <Route path="/chat" element={<Chat />} />
-                <Route path="/chat/:id" element={<ChatRoom />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/saved" element={<Saved />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/edit-profile" element={<EditProfile />} />
-                <Route path="/create-listing" element={<CreateListing />} />
-              </Route>
-            </Route>
+                {/* Protected app shell */}
+                <Route element={<ProtectedRoute />}>
+                  <Route element={<AppLayout />}>
+                    <Route path="/messages" element={<Chat />} />
+                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/chat/:id" element={<ChatRoom />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/saved" element={<Saved />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/edit-profile" element={<EditProfile />} />
+                    <Route path="/create-listing" element={<CreateListing />} />
+                  </Route>
+                </Route>
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
