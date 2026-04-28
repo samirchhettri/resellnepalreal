@@ -190,7 +190,22 @@ const CreateListing = () => {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="font-heading text-xl font-bold">Create listing</h1>
+        <h1 className="font-heading text-xl font-bold flex-1">Create listing</h1>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleAiSuggest}
+          disabled={aiLoading || submitting}
+          className="gap-1.5"
+        >
+          {aiLoading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+          )}
+          AI suggest
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
