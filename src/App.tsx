@@ -20,6 +20,7 @@ import EditProfile from "./pages/EditProfile.tsx";
 import CreateListing from "./pages/CreateListing.tsx";
 import ListingDetail from "./pages/ListingDetail.tsx";
 import Safety from "./pages/Safety.tsx";
+import Help from "./pages/Help.tsx";
 import Login from "./pages/auth/Login.tsx";
 import Signup from "./pages/auth/Signup.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/listing/:id" element={<ListingDetail />} />
               <Route path="/safety" element={<Safety />} />
+              <Route path="/help" element={<Help />} />
             </Route>
 
             {/* Protected app shell */}

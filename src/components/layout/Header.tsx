@@ -1,4 +1,4 @@
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -27,6 +27,13 @@ export const Header = () => {
             className="flex h-11 w-11 items-center justify-center rounded-full text-foreground transition-colors hover:bg-muted"
           >
             <Search className="h-5 w-5" />
+          </Link>
+          <Link
+            to="/help"
+            aria-label="Help & AI assistant"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-foreground transition-colors hover:bg-muted"
+          >
+            <Sparkles className="h-5 w-5" />
           </Link>
           <Link
             to="/notifications"
