@@ -98,8 +98,8 @@ export const useChatRoom = (conversationId?: string) => {
   useEffect(() => {
     if (!conversationId || !user) return;
 
-    const channel = supabase
-      .channel(`room:${conversationId}`)
+    const channel = supabase.channel(`room:${conversationId}:${Date.now()}`);
+    channel
       .on(
         "postgres_changes",
         {
