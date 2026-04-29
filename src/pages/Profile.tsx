@@ -89,14 +89,20 @@ const Profile = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-2">
-        {["My Listings", "Settings", "Help & Support", "Safety Tips"].map((item) => (
-          <button
-            key={item}
+        {[
+          { label: "My Listings", to: "/my-listings" },
+          { label: "Settings", to: "/settings" },
+          { label: "Help & Support", to: "/help" },
+          { label: "Safety Tips", to: "/safety" },
+        ].map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
             className="flex h-12 items-center justify-between rounded-xl border border-border bg-card px-4 text-sm font-medium transition-colors hover:bg-muted"
           >
-            {item}
+            {item.label}
             <span className="text-muted-foreground">›</span>
-          </button>
+          </Link>
         ))}
 
         <Button
