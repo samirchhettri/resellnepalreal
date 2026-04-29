@@ -362,23 +362,49 @@ const ListingDetail = () => {
           </Button>
           <Button
             type="button"
+            variant="outline"
             onClick={handleChat}
             disabled={isSold || isOwner || chatLoading}
             className="h-11 flex-1 gap-2"
+            aria-label="Chat with seller"
           >
             {chatLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <MessageCircle className="h-4 w-4" />
             )}
-            {isOwner
-              ? "Your listing"
-              : isSold
-                ? "No longer available"
-                : "Chat with seller"}
+            Chat
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              if (!requireAuth("buy this item")) return;
+              if (isOwner) {
+                toast({ title: "This is your listing" });
+                return;
+              }
+              setBuyNowOpen(true);
+            }}
+            disabled={isSold || isOwner}
+            className="h-11 flex-1 gap-2"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            {isOwner ? "Your listing" : isSold ? "Unavailable" : "Buy Now"}
           </Button>
         </div>
       </div>
+
+      {user && (
+        <BuyNowDialog
+          open={buyNowOpen}
+          onOpenChange={setBuyNowOpen}
+          buyerId={user.id}
+          sellerId={listing.user_id}
+          listingId={listing.id}
+          listingTitle={listing.title}
+          listingPrice={Number(listing.price)}
+        />
+      )}
 
       <ReportDialog
         open={reportOpen}
