@@ -106,8 +106,8 @@ export const useConversations = () => {
   // Realtime: refresh on any new/updated message or conversation involving the user
   useEffect(() => {
     if (!user) return;
-    const channel = supabase
-      .channel(`conversations:${user.id}`)
+    const channel = supabase.channel(`conversations:${user.id}:${Date.now()}`);
+    channel
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "messages" },
