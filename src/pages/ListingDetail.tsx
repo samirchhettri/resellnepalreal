@@ -87,7 +87,7 @@ const ListingDetail = () => {
       setListing(data as Listing);
 
       const { data: profile } = await supabase
-        .from("profiles")
+        .from("profiles_public" as any)
         .select("id, full_name, avatar_url, location, is_verified, created_at")
         .eq("id", data.user_id)
         .maybeSingle();

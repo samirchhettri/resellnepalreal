@@ -47,7 +47,7 @@ export const useConversations = () => {
 
     const [{ data: profiles }, { data: listings }, { data: msgs }] = await Promise.all([
       supabase
-        .from("profiles")
+        .from("profiles_public" as any)
         .select("id, full_name, avatar_url")
         .in("id", otherIds),
       listingIds.length
