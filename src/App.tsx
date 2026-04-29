@@ -31,6 +31,8 @@ const CreateListing = lazy(() => import("./pages/CreateListing.tsx"));
 const ListingDetail = lazy(() => import("./pages/ListingDetail.tsx"));
 const Safety = lazy(() => import("./pages/Safety.tsx"));
 const Help = lazy(() => import("./pages/Help.tsx"));
+const MyListings = lazy(() => import("./pages/MyListings.tsx"));
+const SettingsPage = lazy(() => import("./pages/Settings.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,6 +81,8 @@ const App = () => (
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/edit-profile" element={<EditProfile />} />
                     <Route path="/create-listing" element={<CreateListing />} />
+                    <Route path="/my-listings" element={<MyListings />} />
+                    <Route path="/settings" element={<SettingsPage />} />
                   </Route>
                 </Route>
 
