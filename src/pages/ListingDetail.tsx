@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Share2,
   Ban,
+  ShoppingBag,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,7 @@ import { startConversation } from "@/lib/chat/startConversation";
 import { useSavedListings } from "@/hooks/useSavedListings";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 import { ReportDialog } from "@/components/safety/ReportDialog";
+import { BuyNowDialog } from "@/components/listings/BuyNowDialog";
 import { cn } from "@/lib/utils";
 
 interface SellerSummary {
@@ -64,6 +66,7 @@ const ListingDetail = () => {
   const [notFound, setNotFound] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [blockConfirmOpen, setBlockConfirmOpen] = useState(false);
+  const [buyNowOpen, setBuyNowOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
