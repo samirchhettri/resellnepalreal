@@ -46,8 +46,8 @@ export const useConversations = () => {
     const convoIds = convos.map((c) => c.id);
 
     const [{ data: profiles }, { data: listings }, { data: msgs }] = await Promise.all([
-      supabase
-        .from("profiles_public" as any)
+      (supabase as any)
+        .from("profiles_public")
         .select("id, full_name, avatar_url")
         .in("id", otherIds),
       listingIds.length
