@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { format, isToday, isYesterday } from "date-fns";
 import { Check, CheckCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChatImage } from "@/components/chat/ChatImage";
 import type { ChatParticipant, Message } from "@/lib/types/chat";
 import { cn } from "@/lib/utils";
 
@@ -79,16 +80,7 @@ export const MessageList = ({ messages, currentUserId, other }: MessageListProps
                     : "rounded-bl-md bg-card text-card-foreground border border-border",
                 )}
               >
-                {m.image_url && (
-                  <a href={m.image_url} target="_blank" rel="noreferrer">
-                    <img
-                      src={m.image_url}
-                      alt="attachment"
-                      className="mb-1 max-h-64 rounded-lg object-cover"
-                      loading="lazy"
-                    />
-                  </a>
-                )}
+                {m.image_url && <ChatImage value={m.image_url} />}
                 {m.content && (
                   <p className="whitespace-pre-wrap break-words leading-snug">{m.content}</p>
                 )}

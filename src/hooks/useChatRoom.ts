@@ -46,8 +46,8 @@ export const useChatRoom = (conversationId?: string) => {
         c.participant_one === user.id ? c.participant_two : c.participant_one;
 
       const [{ data: profile }, { data: msgs }] = await Promise.all([
-        supabase
-          .from("profiles")
+        (supabase as any)
+          .from("profiles_public")
           .select("id, full_name, avatar_url")
           .eq("id", otherId)
           .maybeSingle(),
