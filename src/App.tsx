@@ -65,12 +65,12 @@ const App = () => (
                   <Route path="/category/:slug" element={<CategoryPage />} />
                   <Route path="/listing/:id" element={<ListingDetail />} />
                   <Route path="/safety" element={<Safety />} />
-                  <Route path="/help" element={<Help />} />
                 </Route>
 
                 {/* Protected app shell */}
                 <Route element={<ProtectedRoute />}>
                   <Route element={<AppLayout />}>
+                    <Route path="/help" element={<Help />} />
                     <Route path="/messages" element={<Chat />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/chat/:id" element={<ChatRoom />} />
