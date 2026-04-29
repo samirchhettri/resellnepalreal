@@ -61,7 +61,8 @@ export const MessageComposer = ({ conversationId, onSend, disabled }: MessageCom
         setSending(false);
         return;
       }
-      uploadedUrl = supabase.storage.from("chat-images").getPublicUrl(path).data.publicUrl;
+      // Store the storage path; the bucket is private and recipients fetch a signed URL.
+      uploadedUrl = path;
     }
 
     const { error } = await onSend(text, uploadedUrl);
